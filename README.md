@@ -1,1 +1,1 @@
-This plugin provide Newsstand support into your Cordova/Phonegap application
+This plugin provide Newsstand support functionality into your iOS Cordova/Phonegap application
