@@ -19,28 +19,23 @@
  *
 */`
 
-argscheck = require 'cordova/argscheck'
-channel = require 'cordova/channel'
-utils = require 'cordova/utils'
-exec = require 'cordova/exec'
-cordova = require 'cordova'
-IssueError = require './IssueError'
-Issue = require './Issue'
+`/**
+ *  IssueError.
+ *  An error code assigned by an implementation when an error has occurred
+ * @constructor
+ */`
+IssueError = (err) ->
+	@code = (typeof err isnt 'undefined' ? err : null)
 
-channel.createSticky 'onCordovaInfoReady'
-# Tell cordova channel to wait on the CordovaInfoReady event
-channel.waitForInitialization 'onCordovaInfoReady'
+`/**
+ * Error codes
+ */`
+IssueError.UNKNOWN_ERROR = 0
+IssueError.INVALID_ARGUMENT_ERROR = 1
+IssueError.TIMEOUT_ERROR = 2
+IssueError.PENDING_OPERATION_ERROR = 3
+IssueError.IO_ERROR = 4
+IssueError.NOT_SUPPORTED_ERROR = 5
+IssueError.PERMISSION_DENIED_ERROR = 20
 
-Newsstand = () ->
-	@
-
-Newsstand::test = (successCallback, errorCallback) ->
-	argscheck.checkArgs 'fF', 'Newsstand.test', arguments
-	exec successCallback, errorCallback, "Newsstand", "test", []
-
-Newsstand::addIssue = ->
-Newsstand::getIssue = ->
-Newsstand::archiveIssue = ->
-Newsstand::deleteIssue = ->
-
-module.exports = new Newsstand()
+module.exports = IssueError

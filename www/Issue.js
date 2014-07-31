@@ -19,41 +19,49 @@
  * under the License.
  *
 */;
-var Issue, IssueError, Newsstand, argscheck, channel, cordova, exec, utils;
+var Issue, argscheck, exec, utils;
 
 argscheck = require('cordova/argscheck');
 
-channel = require('cordova/channel');
+exec = require('cordova/exec');
 
 utils = require('cordova/utils');
 
-exec = require('cordova/exec');
+/**
+* Contains information about a single issue.
+* @constructor
+* @param {DOMString} id unique identifier
+* @param {DOMString} date
+* @param {DOMString} url
+* @param {DOMString} cover
+*/;
 
-cordova = require('cordova');
-
-IssueError = require('./IssueError');
-
-Issue = require('./Issue');
-
-channel.createSticky('onCordovaInfoReady');
-
-channel.waitForInitialization('onCordovaInfoReady');
-
-Newsstand = function() {
+Issue = function(id, date, file, cover) {
+  this.id = id;
+  this.date = date;
+  this.file = file;
+  this.cover = cover;
   return this;
 };
 
-Newsstand.prototype.test = function(successCallback, errorCallback) {
-  argscheck.checkArgs('fF', 'Newsstand.test', arguments);
-  return exec(successCallback, errorCallback, "Newsstand", "test", []);
+/**
+* Persists issue metadata to device storage.
+* @param successCB success callback
+* @param errorCB error callback
+*/;
+
+Issue.prototype.add = function(id, date, successCB, errorCB) {};
+
+Issue.prototype.get = function(id) {};
+
+Issue.prototype["delete"] = function(id, archive) {
+  if (archive == null) {
+    archive = false;
+  }
 };
 
-Newsstand.prototype.addIssue = function() {};
+Issue.prototype.download = function(id, url) {};
 
-Newsstand.prototype.getIssue = function() {};
+Issue.prototype.addCover = function(id, url, successCB, errorCB) {};
 
-Newsstand.prototype.archiveIssue = function() {};
-
-Newsstand.prototype.deleteIssue = function() {};
-
-module.exports = new Newsstand();
+module.exports = Issue;

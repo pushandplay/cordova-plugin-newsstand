@@ -20,27 +20,29 @@
 */`
 
 argscheck = require 'cordova/argscheck'
-channel = require 'cordova/channel'
-utils = require 'cordova/utils'
 exec = require 'cordova/exec'
-cordova = require 'cordova'
-IssueError = require './IssueError'
-Issue = require './Issue'
+utils = require 'cordova/utils'
 
-channel.createSticky 'onCordovaInfoReady'
-# Tell cordova channel to wait on the CordovaInfoReady event
-channel.waitForInitialization 'onCordovaInfoReady'
+`/**
+* Contains information about a single issue.
+* @constructor
+* @param {DOMString} id unique identifier
+* @param {DOMString} date
+* @param {DOMString} url
+* @param {DOMString} cover
+*/`
+Issue = (@id, @date, @file, @cover) -> @
 
-Newsstand = () ->
-	@
+`/**
+* Persists issue metadata to device storage.
+* @param successCB success callback
+* @param errorCB error callback
+*/`
+Issue::add = (id, date, successCB, errorCB) ->
+Issue::get = (id) ->
+Issue::delete = (id, archive = false) ->
+Issue::download = (id, url) ->
+Issue::addCover = (id, url, successCB, errorCB) ->
 
-Newsstand::test = (successCallback, errorCallback) ->
-	argscheck.checkArgs 'fF', 'Newsstand.test', arguments
-	exec successCallback, errorCallback, "Newsstand", "test", []
 
-Newsstand::addIssue = ->
-Newsstand::getIssue = ->
-Newsstand::archiveIssue = ->
-Newsstand::deleteIssue = ->
-
-module.exports = new Newsstand()
+module.exports = Issue
