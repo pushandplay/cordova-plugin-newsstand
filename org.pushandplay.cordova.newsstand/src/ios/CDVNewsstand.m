@@ -17,14 +17,17 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import <Cordova/CDVPlugin.h>
+#import "CDVNewsstand.h"
+#import <Cordova/CDV.h>
 
-@interface CDVNewsstand : CDVPlugin
-{}
+@implementation CDVNewsstand
 
-+ (NSString*)cordovaVersion;
-
-- (void)test:(CDVInvokedUrlCommand*)command;
+- (void)addItem:(CDVInvokedUrlCommand*)command {}
+- (void)removeItem:(CDVInvokedUrlCommand*)command {}
+- (void)archiveItem:(CDVInvokedUrlCommand*)command {}
+- (void)updateItem:(CDVInvokedUrlCommand*)command {}
+- (void)getItemInfo:(CDVInvokedUrlCommand*)command {}
+- (void)addItemCover:(CDVInvokedUrlCommand*)command {}
+- (void)updateNewsstandIconImage:(CDVInvokedUrlCommand*)command {}
 
 @end

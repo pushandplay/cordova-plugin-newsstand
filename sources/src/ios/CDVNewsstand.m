@@ -17,27 +17,17 @@
  under the License.
  */
 
-#import <Cordova/CDV.h>
 #import "CDVNewsstand.h"
-
-
-@interface CDVNewsstand () {}
-@end
+#import <Cordova/CDV.h>
 
 @implementation CDVNewsstand
 
-- (void)test:(CDVInvokedUrlCommand*)command
-{
-	CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
-
-
-
-	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-+ (NSString*)cordovaVersion
-{
-    return CDV_VERSION;
-}
+- (void)addItem:(CDVInvokedUrlCommand*)command {}
+- (void)removeItem:(CDVInvokedUrlCommand*)command {}
+- (void)archiveItem:(CDVInvokedUrlCommand*)command {}
+- (void)updateItem:(CDVInvokedUrlCommand*)command {}
+- (void)getItemInfo:(CDVInvokedUrlCommand*)command {}
+- (void)addItemCover:(CDVInvokedUrlCommand*)command {}
+- (void)updateNewsstandIconImage:(CDVInvokedUrlCommand*)command {}
 
 @end

@@ -3,8 +3,8 @@
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
 		id="org.pushandplay.cordova.newsstand"
 		version="0.0.0-dev">
-	<name>AppRate</name>
-	<description>This plugin provide the Newsstand support functionality into your iOS Cordova/Phonegap application</description>
+	<name>Newsstand</name>
+	<description>This plugin provide the Newsstand functionality support into your iOS Cordova/Phonegap application</description>
 	<author>pushandplay</author>
 	<keywords>cordova,phonegap,newsstand</keywords>
 	<license>The MIT License</license>
@@ -16,9 +16,7 @@
 		<engine name="cordova" version=">=3.0.0" />
 	</engines>
 
-	<dependency id="org.apache.cordova.dialogs"/>
-	<dependency id="org.apache.cordova.device"/>
-	<dependency id="org.apache.cordova.globalization"/>
+    <dependency id="org.apache.cordova.console"/>
 
 	<js-module src="www/newsstand.js" name="newsstand">
 		<clobbers target="newsstand"/>
@@ -28,12 +26,14 @@
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
 			<feature name="Newsstand">
-				<param name="ios-package" value="CDVNewsstand"/>
+				<param name="ios-package" value="CDVNewsstand" onload="true"/>
 			</feature>
 		</config-file>
 
 		<header-file src="src/ios/CDVNewsstand.h" />
 		<source-file src="src/ios/CDVNewsstand.m" />
+
+        <framework src="NewsstandKit.framework" weak="false" />
 	</platform>
 
 </plugin>
