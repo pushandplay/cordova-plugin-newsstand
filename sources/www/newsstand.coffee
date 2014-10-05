@@ -36,7 +36,7 @@ class NewsstandItem
     #exec null, null, 'Newsstand', 'addItem', [@issueName, @issueDate, @coverUrl]
     @
   save: (successCallback = null, errorCallback = null) ->
-    exec successCallback, errorCallback, 'Newsstand', 'updateItem', [@name, @data]
+    exec successCallback, errorCallback, 'Newsstand', 'updateItem', [@name, @data, @coverUrl]
     @
   archive: (successCallback = null, errorCallback = null) ->
     exec successCallback, errorCallback, 'Newsstand', 'archiveItem', [@name]
@@ -46,12 +46,13 @@ class NewsstandItem
     @
 
 class Newsstand
-  constructor: () ->
-    @issues = []
+  @getItems: (successCallback = null, errorCallback = null) ->
     exec (success) =>
+      issues = []
       for issue in success
-        @issues.push new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL)
-    , null, 'Newsstand', 'getItems', []
+        issues.push new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL)
+      successCallback issues
+    , errorCallback, 'Newsstand', 'getItems', []
     @
 
   @addItem: (issueName, issueDate, coverURL, successCallback = null, errorCallback = null) ->
