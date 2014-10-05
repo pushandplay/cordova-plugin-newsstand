@@ -62,6 +62,26 @@
 }
 
 - (void)removeItem:(CDVInvokedUrlCommand *)command {
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult *pluginResult = nil;
+		NKLibrary *nkLib = [NKLibrary sharedLibrary];
+		NSString *issueName = @"";
+
+		if ([command.arguments count] >= 1) {
+			issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+		}
+
+		NKIssue *nkIssue = [nkLib issueWithName:issueName];
+
+		if (nkIssue == nil) {
+			[nkLib removeIssue:nkIssue];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+		} else {
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ussue not exist"];
+		}
+
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	}];
 }
 
 - (void)archiveItem:(CDVInvokedUrlCommand *)command {
@@ -81,7 +101,7 @@
 
 		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
-		[dateFormatter setDateFormat:@"yyyy-MM-DD"];
+		[dateFormatter setDateFormat:@"dd-MM-yyyy"];
 
 		for (NKIssue *issue in [nkLib issues]) {
 			[issuesArray addObject:@{
