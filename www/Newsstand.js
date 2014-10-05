@@ -24,12 +24,46 @@ var Newsstand, NewsstandItem, exec;
 exec = require('cordova/exec');
 
 NewsstandItem = (function() {
-  function NewsstandItem(id, coverUrl, date) {
-    this.id = id;
-    this.coverUrl = coverUrl;
+  function NewsstandItem(name, date, status, url) {
+    this.name = name;
     this.date = date;
+    this.status = status;
+    this.url = url;
     this;
   }
+
+  NewsstandItem.prototype.save = function(successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    exec(successCallback, errorCallback, 'Newsstand', 'updateItem', [this.name, this.data]);
+    return this;
+  };
+
+  NewsstandItem.prototype.archive = function(successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    exec(successCallback, errorCallback, 'Newsstand', 'archiveItem', [this.name]);
+    return this;
+  };
+
+  NewsstandItem.prototype.remove = function(successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    exec(successCallback, errorCallback, 'Newsstand', 'removeItem', [this.name]);
+    return this;
+  };
 
   return NewsstandItem;
 
@@ -37,27 +71,39 @@ NewsstandItem = (function() {
 
 Newsstand = (function() {
   function Newsstand() {
+    this.issues = [];
+    exec((function(_this) {
+      return function(success) {
+        var issue, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = success.length; _i < _len; _i++) {
+          issue = success[_i];
+          _results.push(_this.issues.push(new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL)));
+        }
+        return _results;
+      };
+    })(this), null, 'Newsstand', 'getItems', []);
     this;
   }
 
-  Newsstand.prototype.addItem = function(id, coverUrl, date) {
-    return new NewsstandItem(id, coverUrl, date);
+  Newsstand.addItem = function(issueName, issueDate, coverURL, successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    return new NewsstandItem(issueName, issueDate, coverURL, successCallback, errorCallback);
   };
 
-  Newsstand.prototype.getItem = function() {
-    return this;
-  };
-
-  Newsstand.prototype.archiveItem = function() {
-    return this;
-  };
-
-  Newsstand.prototype.deleteItem = function() {
-    return this;
-  };
-
-  Newsstand.prototype.updateNewsstandIconImage = function(coverURL) {
-    exec(null, null, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
+  Newsstand.updateNewsstandIconImage = function(coverURL, successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    exec(successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
     return this;
   };
 

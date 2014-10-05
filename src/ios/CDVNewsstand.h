@@ -18,6 +18,7 @@
  */
 
 #import <Cordova/CDV.h>
+#import <NewsstandKit/NewsstandKit.h>
 
 @interface CDVNewsstand : CDVPlugin
 
@@ -29,9 +30,9 @@
 
 - (void)updateItem:(CDVInvokedUrlCommand *)command;
 
-- (void)getItemInfo:(CDVInvokedUrlCommand *)command;
+- (void)getItem:(CDVInvokedUrlCommand *)command;
 
-- (void)addItemCover:(CDVInvokedUrlCommand *)command;
+- (void)getItems:(CDVInvokedUrlCommand *)command;
 
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command;
 
