@@ -32,12 +32,14 @@ exec = require 'cordova/exec'
 #channel.waitForInitialization 'onCordovaInfoReady'
 
 class NewsstandItem
-	constructor: (@id,@coverUrl,@date)-> @
+	constructor: (@issueName, @issueDate, @coverUrl)->
+    exec null, null, 'Newsstand', 'addItem', [@issueName, @issueDate, @coverUrl]
+    @
 
 class Newsstand
 	constructor: -> @
 
-	addItem: (id,coverUrl,date) -> new NewsstandItem(id,coverUrl,date)
+	addItem: (issueName, issueDate, coverURL) -> new NewsstandItem(issueName, issueDate, coverURL)
 	getItem: -> @
 	archiveItem: -> @
 	deleteItem: ->

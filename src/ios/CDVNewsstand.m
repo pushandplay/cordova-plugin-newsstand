@@ -20,9 +20,42 @@
 #import "CDVNewsstand.h"
 #import <Cordova/CDV.h>
 
+
+#define ISSUE_COVER_NAME        "cover.jpg"
+
+
 @implementation CDVNewsstand
 
 - (void)addItem:(CDVInvokedUrlCommand *)command {
+	CDVPluginResult *pluginResult = nil;
+	NSString *issueName = @"";
+	NSString *issueDate = @"";
+	NSString *coverURL = @"";
+	NKLibrary *nkLib = [NKLibrary sharedLibrary];
+
+	if ([command.arguments count] >= 1) {
+		issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+	}
+	if ([command.arguments count] >= 2) {
+		issueDate = (NSString *) (command.arguments)[1];
+	}
+	if ([command.arguments count] >= 3) {
+		coverURL = (NSString *) (command.arguments)[2];
+	}
+
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+	NSDate *dateFromString = [dateFormatter dateFromString:issueDate];
+	NKIssue *nkIssue = [nkLib issueWithName:issueName];
+
+	if (nkIssue == nil) {
+		nkIssue = [nkLib addIssueWithName:issueName date:dateFromString];
+	}
+
+	NSDictionary *pluginResultDictionary = @{@"contentURL" : [nkIssue.contentURL absoluteString]};
+
+	pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pluginResultDictionary];
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)removeItem:(CDVInvokedUrlCommand *)command {
@@ -34,15 +67,12 @@
 - (void)updateItem:(CDVInvokedUrlCommand *)command {
 }
 
-- (void)getItemInfo:(CDVInvokedUrlCommand *)command {
-}
-
-- (void)addItemCover:(CDVInvokedUrlCommand *)command {
+- (void)getItem:(CDVInvokedUrlCommand *)command {
 }
 
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command {
 	[self.commandDelegate runInBackground:^{
-		CDVPluginResult* pluginResult = nil;
+		CDVPluginResult *pluginResult = nil;
 		NSString *coverURL = @"";
 		if ([command.arguments count] >= 1) {
 			coverURL = (NSString *) (command.arguments)[0];

@@ -24,10 +24,11 @@ var Newsstand, NewsstandItem, exec;
 exec = require('cordova/exec');
 
 NewsstandItem = (function() {
-  function NewsstandItem(id, coverUrl, date) {
-    this.id = id;
+  function NewsstandItem(issueName, issueDate, coverUrl) {
+    this.issueName = issueName;
+    this.issueDate = issueDate;
     this.coverUrl = coverUrl;
-    this.date = date;
+    exec(null, null, 'Newsstand', 'addItem', [this.issueName, this.issueDate, this.coverUrl]);
     this;
   }
 
@@ -40,8 +41,8 @@ Newsstand = (function() {
     this;
   }
 
-  Newsstand.prototype.addItem = function(id, coverUrl, date) {
-    return new NewsstandItem(id, coverUrl, date);
+  Newsstand.prototype.addItem = function(issueName, issueDate, coverURL) {
+    return new NewsstandItem(issueName, issueDate, coverURL);
   };
 
   Newsstand.prototype.getItem = function() {
@@ -56,8 +57,14 @@ Newsstand = (function() {
     return this;
   };
 
-  Newsstand.prototype.updateNewsstandIconImage = function(coverURL) {
-    exec(null, null, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
+  Newsstand.prototype.updateNewsstandIconImage = function(coverURL, successCallback, errorCallback) {
+    if (successCallback == null) {
+      successCallback = null;
+    }
+    if (errorCallback == null) {
+      errorCallback = null;
+    }
+    exec(successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
     return this;
   };
 
