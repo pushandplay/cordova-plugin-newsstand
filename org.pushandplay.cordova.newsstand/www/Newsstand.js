@@ -19,24 +19,38 @@
  * under the License.
  *
 */;
-var Newsstand;
+var Newsstand, NewsstandItem;
+
+NewsstandItem = (function() {
+  function NewsstandItem(id, coverUrl, date) {
+    this.id = id;
+    this.coverUrl = coverUrl;
+    this.date = date;
+    this;
+  }
+
+  return NewsstandItem;
+
+})();
 
 Newsstand = (function() {
-  function Newsstand() {}
+  function Newsstand() {
+    this;
+  }
 
-  Newsstand.prototype.addIssue = function() {
+  Newsstand.prototype.addItem = function(id, coverUrl, date) {
+    return new NewsstandItem(id, coverUrl, date);
+  };
+
+  Newsstand.prototype.getItem = function() {
     return this;
   };
 
-  Newsstand.prototype.getIssue = function() {
+  Newsstand.prototype.archiveItem = function() {
     return this;
   };
 
-  Newsstand.prototype.archiveIssue = function() {
-    return this;
-  };
-
-  Newsstand.prototype.deleteIssue = function() {
+  Newsstand.prototype.deleteItem = function() {
     return this;
   };
 

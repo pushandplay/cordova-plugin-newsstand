@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
 		id="org.pushandplay.cordova.newsstand"
-		version="0.0.0-dev">
+		version="0.0.1-dev">
 	<name>Newsstand</name>
 	<description>This plugin provide the Newsstand functionality support into your iOS Cordova/Phonegap application</description>
 	<author>pushandplay</author>
@@ -18,8 +18,8 @@
 
     <dependency id="org.apache.cordova.console"/>
 
-	<js-module src="www/newsstand.js" name="newsstand">
-		<clobbers target="newsstand"/>
+	<js-module src="www/Newsstand.js" name="Newsstand">
+		<clobbers target="navigator.Newsstand"/>
 	</js-module>
 
 	<!-- ios -->

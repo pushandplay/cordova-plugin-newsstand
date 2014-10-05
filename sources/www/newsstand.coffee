@@ -31,11 +31,16 @@
 # Tell cordova channel to wait on the CordovaInfoReady event
 #channel.waitForInitialization 'onCordovaInfoReady'
 
+class NewsstandItem
+	constructor: (@id,@coverUrl,@date)-> @
+
 class Newsstand
-	addIssue: -> @
-	getIssue: -> @
-	archiveIssue: -> @
-	deleteIssue: -> @
+	constructor: -> @
+
+	addItem: (id,coverUrl,date) -> new NewsstandItem(id,coverUrl,date)
+	getItem: -> @
+	archiveItem: -> @
+	deleteItem: -> @
 
 
 module.exports = new Newsstand @

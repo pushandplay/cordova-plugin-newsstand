@@ -18,8 +18,8 @@
 
     <dependency id="org.apache.cordova.console"/>
 
-	<js-module src="www/newsstand.js" name="newsstand">
-		<clobbers target="newsstand"/>
+	<js-module src="www/Newsstand.js" name="Newsstand">
+		<clobbers target="navigator.Newsstand"/>
 	</js-module>
 
 	<!-- ios -->
