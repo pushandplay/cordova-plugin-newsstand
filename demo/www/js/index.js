@@ -47,7 +47,10 @@ var app = {
         console.log('Received Event: ' + id);
 
 		//navigator.Newsstand.updateNewsstandIconImage('http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
-		navigator.Newsstand.addItem('test', '2014-08-23 07:48:01', 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
+
+		//for(var i=0; i<10; i++) {
+		//	navigator.Newsstand.addItem("issue-"+i, '2014-08-23 07:48:01', 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
+		//}
 	}
 };
 
