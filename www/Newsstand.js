@@ -19,7 +19,9 @@
  * under the License.
  *
 */;
-var Newsstand, NewsstandItem;
+var Newsstand, NewsstandItem, exec;
+
+exec = require('cordova/exec');
 
 NewsstandItem = (function() {
   function NewsstandItem(id, coverUrl, date) {
@@ -51,6 +53,11 @@ Newsstand = (function() {
   };
 
   Newsstand.prototype.deleteItem = function() {
+    return this;
+  };
+
+  Newsstand.prototype.updateNewsstandIconImage = function(coverURL) {
+    exec(null, null, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
     return this;
   };
 

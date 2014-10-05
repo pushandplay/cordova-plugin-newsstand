@@ -22,7 +22,7 @@
 #argscheck = require 'cordova/argscheck'
 #channel = require 'cordova/channel'
 #utils = require 'cordova/utils'
-#exec = require 'cordova/exec'
+exec = require 'cordova/exec'
 #cordova = require 'cordova'
 #IssueError = require './IssueError'
 #Issue = require './Issue'
@@ -40,7 +40,12 @@ class Newsstand
 	addItem: (id,coverUrl,date) -> new NewsstandItem(id,coverUrl,date)
 	getItem: -> @
 	archiveItem: -> @
-	deleteItem: -> @
+	deleteItem: ->
+    @
+
+  updateNewsstandIconImage: (coverURL, successCallback = null, errorCallback = null) ->
+    exec successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]
+    @
 
 
 module.exports = new Newsstand @

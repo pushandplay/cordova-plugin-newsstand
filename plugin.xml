@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
+        id="org.pushandplay.cordova.newsstand"
+        version="0.0.1-dev">
+    <name>Newsstand</name>
+    <description>This plugin provide the Newsstand functionality support into your iOS Cordova/Phonegap application
+    </description>
+    <author>pushandplay</author>
+    <keywords>cordova,phonegap,newsstand</keywords>
+    <license>The MIT License</license>
+    <info>Newsstand plugin for Cordova / PhoneGap</info>
+    <repo>https://github.com/pushandplay/cordova-plugin-newsstand.git</repo>
+    <issue>https://github.com/pushandplay/cordova-plugin-newsstand/issues</issue>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0"/>
+    </engines>
+
+    <dependency id="org.apache.cordova.console"/>
+
+    <!-- ios -->
+    <platform name="ios">
+        <js-module src="www/Newsstand.js" name="Newsstand">
+            <clobbers target="navigator.Newsstand"/>
+        </js-module>
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="Newsstand">
+                <param name="ios-package" value="CDVNewsstand" onload="false"/>
+            </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="UINewsstandApp">
+            <key>UINewsstandApp</key>
+            <true/>
+        </config-file>
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <key>UIBackgroundModes</key>
+            <array>
+                <string>newsstand-content</string>
+            </array>
+        </config-file>
+        <!--<config-file target="*-Info.plist" parent="CFBundleIcons">
+            <dict>
+                <key>UINewsstandIcon</key>
+                <dict>
+                    <key>CFBundleIconFiles</key>
+                    <array>
+                        <string>icon_newsstand.png</string>
+                    </array>
+                    <key>UINewsstandBindingEdge</key>
+                    <string>UINewsstandBindingEdgeLeft</string>
+                    <key>UINewsstandBindingType</key>
+                    <string>UINewsstandBindingTypeMagazine</string>
+                </dict>
+            </dict>
+        </config-file>-->
+
+        <header-file src="src/ios/CDVNewsstand.h"/>
+        <source-file src="src/ios/CDVNewsstand.m"/>
+
+        <framework src="NewsstandKit.framework" weak="false"/>
+    </platform>
+
+</plugin>
