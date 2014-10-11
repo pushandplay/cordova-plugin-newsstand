@@ -17,27 +17,27 @@
  * under the License.
  */
 var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        console.log('Received Event: ' + id);
+	// Application Constructor
+	initialize: function () {
+		this.bindEvents();
+	},
+	// Bind Event Listeners
+	//
+	// Bind any events that are required on startup. Common events are:
+	// 'load', 'deviceready', 'offline', and 'online'.
+	bindEvents: function () {
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+	},
+	// deviceready Event Handler
+	//
+	// The scope of 'this' is the event. In order to call the 'receivedEvent'
+	// function, we must explicitly call 'app.receivedEvent(...);'
+	onDeviceReady: function () {
+		app.receivedEvent('deviceready');
+	},
+	// Update DOM on a Received Event
+	receivedEvent: function (id) {
+		console.log('Received Event: ' + id);
 
 		//for(var i=0; i<10; i++) {
 		//	navigator.Newsstand.addItem("issue-"+i, '2014-08-23 07:48:01', 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
@@ -50,39 +50,45 @@ var app = {
 		document.getElementById('btn-getItems').onclick = this.test_getItems;
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
 	},
-	test_addItem: function(e){
+	test_addItem: function (e) {
 		var issueName = "issue-0";
-		var issueDate = new Date().toISOString().slice(0, 19).replace('T',' ');
+		var issueDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
-		var successCallback = function(issueDate){
-			console.log('success', JSON.stringify(issueDate));
+		var successCallback = function (issueDate) {
+			console.log('test_addItem->success', JSON.stringify(issueDate));
 		};
-		var errorCallback = function(msg){
-			alert('error: ' + msg);
+		var errorCallback = function (msg) {
+			console.log('test_addItem->error: ' + msg);
 		};
 
 		var issueItem = Newsstand.addItem(issueName, issueDate, iconUrl);
 		issueItem.save(successCallback, errorCallback);
 	},
-	test_removeItem: function(e){
+	test_removeItem: function (e) {
 
 	},
-	test_archiveItem: function(e){
+	test_archiveItem: function (e) {
 
 	},
-	test_updateItem: function(e){
+	test_updateItem: function (e) {
 
 	},
-	test_getItems: function(e){
-
-	},
-	test_updateNewsstandIconImage: function(e){
-		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
-		var successCallback = function(msg){
-			alert('success: ' + msg );
+	test_getItems: function (e) {
+		var successCallback = function (data) {
+			console.log('test_getItems->success: ' + JSON.stringify(data));
 		};
-		var errorCallback = function(){
-			alert('error');
+		var errorCallback = function () {
+			console.log('test_getItems->error');
+		};
+		Newsstand.getItems(successCallback, errorCallback);
+	},
+	test_updateNewsstandIconImage: function (e) {
+		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
+		var successCallback = function (msg) {
+			console.log('test_updateNewsstandIconImage->success: ' + msg);
+		};
+		var errorCallback = function () {
+			console.log('test_updateNewsstandIconImage->error');
 		};
 
 		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
