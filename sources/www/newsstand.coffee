@@ -47,11 +47,11 @@ class NewsstandItem
 
 class Newsstand
   getItems: (successCallback, errorCallback) ->
-    exec (success) =>
+    exec (success) ->
       issues = []
       for issue in success
         issues.push new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL)
-      successCallback issues
+      successCallback? issues
     , errorCallback, 'Newsstand', 'getItems', []
     @
 

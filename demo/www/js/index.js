@@ -50,14 +50,16 @@ var app = {
 		document.getElementById('btn-updateItem').onclick = this.test_updateItem;
 		document.getElementById('btn-getItems').onclick = this.test_getItems;
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
+
+		app.test_getItems();
 	},
 	test_addItem: function () {
 		var issueName = "issue-" + app.issues.length;
 		var issueDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
 		var successCallback = function (issueDate) {
-			app.issues.push = issueDate;
-			console.log('test_addItem->success', JSON.stringify(app.issues));
+			console.log('test_addItem->success', JSON.stringify(issueDate));
+			app.test_getItems()
 		};
 		var errorCallback = function (msg) {
 			console.log('test_addItem->error: ' + msg, app.issues);
@@ -65,11 +67,23 @@ var app = {
 
 		var issueItem = Newsstand.addItem(issueName, issueDate, iconUrl);
 		issueItem.save(successCallback, errorCallback);
-
-		return this;
 	},
-	test_removeItem: function (e) {
+	test_removeItem: function () {
+		var lastIssue = app.issues[app.issues.length - 1];
+		var successCallback = function () {
+			app.issues.pop();
+			console.log('test_removeItem->success', JSON.stringify(app.issues.length));
+			app.test_getItems();
+		};
+		var errorCallback = function (msg) {
+			console.log('test_removeItem->error: ' + msg);
+		};
 
+		if (lastIssue) {
+			lastIssue.remove(successCallback, errorCallback);
+		} else {
+			app.test_getItems();
+		}
 	},
 	test_archiveItem: function (e) {
 

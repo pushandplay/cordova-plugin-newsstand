@@ -55,17 +55,15 @@ Newsstand = (function() {
   function Newsstand() {}
 
   Newsstand.prototype.getItems = function(successCallback, errorCallback) {
-    exec((function(_this) {
-      return function(success) {
-        var issue, issues, _i, _len;
-        issues = [];
-        for (_i = 0, _len = success.length; _i < _len; _i++) {
-          issue = success[_i];
-          issues.push(new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL));
-        }
-        return successCallback(issues);
-      };
-    })(this), errorCallback, 'Newsstand', 'getItems', []);
+    exec(function(success) {
+      var issue, issues, _i, _len;
+      issues = [];
+      for (_i = 0, _len = success.length; _i < _len; _i++) {
+        issue = success[_i];
+        issues.push(new NewsstandItem(issue.name, issue.date, issue.status, issue.contentURL));
+      }
+      return successCallback(issues);
+    }, errorCallback, 'Newsstand', 'getItems', []);
     return this;
   };
 

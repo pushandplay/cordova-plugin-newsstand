@@ -74,11 +74,12 @@
 
 		NKIssue *nkIssue = [nkLib issueWithName:issueName];
 
-		if (nkIssue == nil) {
+		if (nkIssue != nil) {
 			[nkLib removeIssue:nkIssue];
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 		} else {
-			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ussue not exist"];
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" not exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
 		}
 
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
