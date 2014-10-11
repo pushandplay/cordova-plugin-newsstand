@@ -44,14 +44,14 @@
 			coverURL = (NSString *) (command.arguments)[2];
 		}
 
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
-		NSDate *dateFromString = [dateFormatter dateFromString:issueDate];
 		NKIssue *nkIssue = [nkLib issueWithName:issueName];
 
 		if (nkIssue == nil) {
+			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+			[dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+			NSDate *dateFromString = [dateFormatter dateFromString:issueDate];
 			nkIssue = [nkLib addIssueWithName:issueName date:dateFromString];
-			NSDictionary *pluginResultDictionary = @{@"contentURL" : [nkIssue.contentURL absoluteString]};
+			NSDictionary *pluginResultDictionary = [self getIssueDataAsObject:nkIssue];
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pluginResultDictionary];
 		} else {
 			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" already exist", issueName];
@@ -101,17 +101,8 @@
 		NKLibrary *nkLib = [NKLibrary sharedLibrary];
 		NSMutableArray *issuesArray = [[NSMutableArray alloc] init];
 
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
-		[dateFormatter setDateFormat:@"dd-MM-yyyy"];
-
-		for (NKIssue *issue in [nkLib issues]) {
-			[issuesArray addObject:@{
-					@"name" : issue.name,
-					@"status" : @([[@(issue.status) stringValue] intValue]),
-					@"date" : [dateFormatter stringFromDate:issue.date],
-					@"contentURL" : [issue.contentURL absoluteString]
-			}];
+		for (NKIssue *nkIssue in [nkLib issues]) {
+			[issuesArray addObject:[self getIssueDataAsObject:nkIssue]];
 		}
 
 		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:issuesArray];
@@ -141,6 +132,22 @@
 
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 	}];
+}
+
+
+- (NSDictionary *)getIssueDataAsObject:(NKIssue *)nkIssue {
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+	[dateFormatter setDateFormat:@"dd-MM-yyyy"];
+
+	NSDictionary *pluginResultDictionary = @{
+			@"name" : nkIssue.name,
+			@"status" : @([[@(nkIssue.status) stringValue] intValue]),
+			@"date" : [dateFormatter stringFromDate:nkIssue.date],
+			@"contentURL" : [nkIssue.contentURL absoluteString]
+	};
+
+	return pluginResultDictionary;
 }
 
 @end
