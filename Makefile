@@ -15,7 +15,7 @@ DIR_DEMO_APP = $(DIR_DEMO)/$(APP_TITLE)
 
 
 
-.PHONY: all prepare coffee clean app_prepare
+.PHONY: all prepare coffee clean demo_create demo_update
 
 all: prepare coffee clean demo_update
 release: all compress
@@ -52,8 +52,12 @@ demo_create: prepare
 	@cordova create $(DIR_DEMO_APP) $(PLUGIN_ID).$(APP_TITLE) $(APP_TITLE) --link-to=$(DIR_DEMO)/www/
 	@cd $(DIR_DEMO_APP) && cordova platform add ios
 	@cd $(DIR_DEMO_APP) && cordova plugins add ../$(PLUGIN_ID)
+	@find $(DIR_DEMO_APP) -name "$(APP_TITLE).xcodeproj" -exec open {} \;
 
 demo_update:
 	@cd $(DIR_DEMO_APP) && cordova plugins remove $(PLUGIN_ID)
 	@cd $(DIR_DEMO_APP) && cordova plugins add ../$(PLUGIN_ID)
+	@cd $(DIR_DEMO_APP) && cordova prepare
+
+demo_prepare:
 	@cd $(DIR_DEMO_APP) && cordova prepare

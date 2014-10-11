@@ -37,20 +37,55 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
         console.log('Received Event: ' + id);
-
-		//navigator.Newsstand.updateNewsstandIconImage('http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
 
 		//for(var i=0; i<10; i++) {
 		//	navigator.Newsstand.addItem("issue-"+i, '2014-08-23 07:48:01', 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg');
 		//}
+
+		document.getElementById('btn-addItem').onclick = this.test_addItem;
+		document.getElementById('btn-removeItem').onclick = this.test_removeItem;
+		document.getElementById('btn-archiveItem').onclick = this.test_archiveItem;
+		document.getElementById('btn-updateItem').onclick = this.test_updateItem;
+		document.getElementById('btn-getItems').onclick = this.test_getItems;
+		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
+	},
+	test_addItem: function(e){
+		var issueName = "issue-0";
+		var issueDate = new Date().toISOString().slice(0, 19).replace('T',' ');
+		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
+		var successCallback = function(issueDate){
+			console.log('success', JSON.stringify(issueDate));
+		};
+		var errorCallback = function(msg){
+			alert('error: ' + msg);
+		};
+
+		var issueItem = Newsstand.addItem(issueName, issueDate, iconUrl);
+		issueItem.save(successCallback, errorCallback);
+	},
+	test_removeItem: function(e){
+
+	},
+	test_archiveItem: function(e){
+
+	},
+	test_updateItem: function(e){
+
+	},
+	test_getItems: function(e){
+
+	},
+	test_updateNewsstandIconImage: function(e){
+		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
+		var successCallback = function(msg){
+			alert('success: ' + msg );
+		};
+		var errorCallback = function(){
+			alert('error');
+		};
+
+		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
 	}
 };
 

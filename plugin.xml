@@ -22,12 +22,12 @@
     <!-- ios -->
     <platform name="ios">
         <js-module src="www/Newsstand.js" name="Newsstand">
-            <clobbers target="navigator.Newsstand"/>
+            <clobbers target="Newsstand"/>
         </js-module>
 
         <config-file target="config.xml" parent="/*">
             <feature name="Newsstand">
-                <param name="ios-package" value="CDVNewsstand" onload="false"/>
+                <param name="ios-package" value="CDVNewsstand" onload="true"/>
             </feature>
         </config-file>
 

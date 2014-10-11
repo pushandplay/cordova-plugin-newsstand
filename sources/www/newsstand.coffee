@@ -32,21 +32,21 @@ exec = require 'cordova/exec'
 #channel.waitForInitialization 'onCordovaInfoReady'
 
 class NewsstandItem
-	constructor: (@name, @date, @status, @url)->
+	constructor: (@name, @date, @status = null, @url)->
     #exec null, null, 'Newsstand', 'addItem', [@issueName, @issueDate, @coverUrl]
     @
-  save: (successCallback = null, errorCallback = null) ->
-    exec successCallback, errorCallback, 'Newsstand', 'updateItem', [@name, @data, @coverUrl]
+  save: (successCallback, errorCallback) ->
+    exec successCallback, errorCallback, 'Newsstand', 'addItem', [@name, @date, @coverUrl]
     @
-  archive: (successCallback = null, errorCallback = null) ->
+  archive: (successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'archiveItem', [@name]
     @
-  remove: (successCallback = null, errorCallback = null) ->
+  remove: (successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'removeItem', [@name]
     @
 
 class Newsstand
-  @getItems: (successCallback = null, errorCallback = null) ->
+  getItems: (successCallback, errorCallback) ->
     exec (success) =>
       issues = []
       for issue in success
@@ -55,10 +55,10 @@ class Newsstand
     , errorCallback, 'Newsstand', 'getItems', []
     @
 
-  @addItem: (issueName, issueDate, coverURL, successCallback = null, errorCallback = null) ->
-    new NewsstandItem(issueName, issueDate, coverURL, successCallback, errorCallback)
+  addItem: (issueName, issueDate, coverURL) ->
+    new NewsstandItem(issueName, issueDate, coverURL)
 
-  @updateNewsstandIconImage: (coverURL, successCallback = null, errorCallback = null) ->
+  updateNewsstandIconImage: (coverURL, successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]
     @
 

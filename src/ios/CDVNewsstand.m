@@ -54,7 +54,8 @@
 			NSDictionary *pluginResultDictionary = @{@"contentURL" : [nkIssue.contentURL absoluteString]};
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pluginResultDictionary];
 		} else {
-			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ussue alreday exist"];
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" already exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
 		}
 
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
