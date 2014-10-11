@@ -17,6 +17,7 @@
  * under the License.
  */
 var app = {
+	issues: [],
 	// Application Constructor
 	initialize: function () {
 		this.bindEvents();
@@ -50,19 +51,22 @@ var app = {
 		document.getElementById('btn-getItems').onclick = this.test_getItems;
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
 	},
-	test_addItem: function (e) {
-		var issueName = "issue-0";
+	test_addItem: function () {
+		var issueName = "issue-" + app.issues.length;
 		var issueDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
 		var successCallback = function (issueDate) {
-			console.log('test_addItem->success', JSON.stringify(issueDate));
+			app.issues.push = issueDate;
+			console.log('test_addItem->success', JSON.stringify(app.issues));
 		};
 		var errorCallback = function (msg) {
-			console.log('test_addItem->error: ' + msg);
+			console.log('test_addItem->error: ' + msg, app.issues);
 		};
 
 		var issueItem = Newsstand.addItem(issueName, issueDate, iconUrl);
 		issueItem.save(successCallback, errorCallback);
+
+		return this;
 	},
 	test_removeItem: function (e) {
 
@@ -73,9 +77,10 @@ var app = {
 	test_updateItem: function (e) {
 
 	},
-	test_getItems: function (e) {
+	test_getItems: function () {
 		var successCallback = function (data) {
-			console.log('test_getItems->success: ' + JSON.stringify(data));
+			app.issues = data;
+			console.log('test_getItems->success: ' + JSON.stringify(app.issues));
 		};
 		var errorCallback = function () {
 			console.log('test_getItems->error');
