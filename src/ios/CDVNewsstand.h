@@ -28,8 +28,6 @@
 
 - (void)archiveItem:(CDVInvokedUrlCommand *)command;
 
-- (void)updateItem:(CDVInvokedUrlCommand *)command;
-
 - (void)getItem:(CDVInvokedUrlCommand *)command;
 
 - (void)getItems:(CDVInvokedUrlCommand *)command;

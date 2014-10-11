@@ -32,11 +32,10 @@ exec = require 'cordova/exec'
 #channel.waitForInitialization 'onCordovaInfoReady'
 
 class NewsstandItem
-	constructor: (@name, @date, @status = null, @url)->
-    #exec null, null, 'Newsstand', 'addItem', [@issueName, @issueDate, @coverUrl]
+	constructor: (@name, @date, @status, @contentURL)->
     @
   save: (successCallback, errorCallback) ->
-    exec successCallback, errorCallback, 'Newsstand', 'addItem', [@name, @date, @coverUrl]
+    exec successCallback, errorCallback, 'Newsstand', 'addItem', [@name, @date]
     @
   archive: (successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'archiveItem', [@name]
@@ -55,8 +54,8 @@ class Newsstand
     , errorCallback, 'Newsstand', 'getItems', []
     @
 
-  addItem: (issueName, issueDate, coverURL) ->
-    new NewsstandItem(issueName, issueDate, coverURL)
+  addItem: (issueName, issueDate, successCallback, errorCallback) ->
+    new NewsstandItem(issueName, issueDate).save(successCallback, errorCallback)
 
   updateNewsstandIconImage: (coverURL, successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]

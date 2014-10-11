@@ -56,17 +56,15 @@ var app = {
 	test_addItem: function () {
 		var issueName = "issue-" + app.issues.length;
 		var issueDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-		var iconUrl = 'http://img1.wikia.nocookie.net/__cb20131211202311/walkingdead/images/f/f2/TWD-cover-124-dressed.jpeg';
 		var successCallback = function (issueDate) {
 			console.log('test_addItem->success', JSON.stringify(issueDate));
 			app.test_getItems()
 		};
 		var errorCallback = function (msg) {
-			console.log('test_addItem->error: ' + msg, app.issues);
+			console.log('test_addItem->error: ' + msg);
 		};
 
-		var issueItem = Newsstand.addItem(issueName, issueDate, iconUrl);
-		issueItem.save(successCallback, errorCallback);
+		Newsstand.addItem(issueName, issueDate, successCallback, errorCallback);
 	},
 	test_removeItem: function () {
 		var lastIssue = app.issues[app.issues.length - 1];
