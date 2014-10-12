@@ -108,12 +108,12 @@ var app = {
 		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
 	},
 	test_downloadItem: function() {
-		var lastIssue = app.issues[app.issues.length - 1];
+		var lastIssue = app.issues[0];
 		var successCallback = function (msg) {
 			console.log('test_downloadItems->success: ' + msg);
 		};
-		var errorCallback = function () {
-			console.log('test_downloadItems->error');
+		var errorCallback = function (msg) {
+			console.log('test_downloadItems->error: ' + msg);
 		};
 
 		if (lastIssue) {

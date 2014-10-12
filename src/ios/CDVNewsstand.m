@@ -128,7 +128,7 @@
 
 				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
 			} else {
-				NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" busy, status: %d", issueName, nkIssue.status];
+				NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" busy, status: %d", nkIssue.name, nkIssue.status];
 				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
 			}
 		} else {
