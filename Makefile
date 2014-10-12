@@ -17,7 +17,7 @@ DIR_DEMO_APP = $(DIR_DEMO)/$(APP_TITLE)
 
 .PHONY: all prepare coffee clean demo_create demo_update
 
-all: prepare coffee clean demo_update
+all: prepare coffee clean
 release: all compress
 	@echo "\n\033[32mComplete\033[0m\n"
 
@@ -59,5 +59,5 @@ demo_update:
 	@cd $(DIR_DEMO_APP) && cordova plugins add ../$(PLUGIN_ID)
 	@cd $(DIR_DEMO_APP) && cordova prepare
 
-demo_prepare:
+demo_prepare: all
 	@cd $(DIR_DEMO_APP) && cordova prepare

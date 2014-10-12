@@ -47,9 +47,20 @@ var app = {
 		document.getElementById('btn-addItem').onclick = this.test_addItem;
 		document.getElementById('btn-removeItem').onclick = this.test_removeItem;
 		document.getElementById('btn-archiveItem').onclick = this.test_archiveItem;
-		document.getElementById('btn-updateItem').onclick = this.test_updateItem;
 		document.getElementById('btn-getItems').onclick = this.test_getItems;
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
+		document.getElementById('btn-downloadItem').onclick = this.test_downloadItem;
+
+		Newsstand.onDownloadProgress = function(issueName, bytesWritten, totalBytesWritten, expectedTotalBytes) {
+			var progressEl = document.querySelector('#' + issueName + ' .progress');
+			progressEl.style.width = Math.round(totalBytesWritten/expectedTotalBytes*100) + '%';
+			console.log("onDownloadProgress->"+issueName, bytesWritten, totalBytesWritten, expectedTotalBytes);
+		};
+
+		Newsstand.onIssueStatus = function(issueName, issueStatus) {
+			document.getElementById(issueName).setAttribute('data-status', issueStatus);
+			console.log("onIssueStatus->"+issueName+"->"+issueStatus);
+		};
 
 		app.test_getItems();
 	},
@@ -67,7 +78,7 @@ var app = {
 		Newsstand.addItem(issueName, issueDate, successCallback, errorCallback);
 	},
 	test_removeItem: function () {
-		var lastIssue = app.issues[app.issues.length - 1];
+		var lastIssue = app.issues[0];
 		var successCallback = function () {
 			app.issues.pop();
 			console.log('test_removeItem->success', JSON.stringify(app.issues.length));
@@ -86,13 +97,11 @@ var app = {
 	test_archiveItem: function (e) {
 
 	},
-	test_updateItem: function (e) {
-
-	},
 	test_getItems: function () {
 		var successCallback = function (data) {
 			app.issues = data;
 			console.log('test_getItems->success: ' + JSON.stringify(app.issues));
+			app.updateIssuesList();
 		};
 		var errorCallback = function () {
 			console.log('test_getItems->error');
@@ -109,7 +118,47 @@ var app = {
 		};
 
 		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
+	},
+	test_downloadItem: function () {
+		var lastIssue = app.issues[0];
+		var successCallback = function (msgObj) {
+			console.log('test_downloadItems->success: ' + JSON.stringify(msgObj));
+			app.test_getItems();
+		};
+		var errorCallback = function (msg) {
+			console.log('test_downloadItems->error: ' + msg);
+		};
+
+		if (lastIssue) {
+			lastIssue.download(successCallback, errorCallback)
+		} else {
+			app.test_getItems();
+		}
+	},
+	updateIssuesList: function () {
+		var boxEl = document.getElementById('issues');
+		var issueHtml = [];
+		var currentIssue = void 0;
+		var currentIssueArr = [];
+		var issuesCount = app.issues.length;
+
+		for (var i = 0; i < issuesCount; ++i) {
+			currentIssueArr = [];
+			currentIssue = app.issues[i];
+
+			currentIssueArr.push('<div id="' + currentIssue.name + '" class="issue" data-status="'+currentIssue.status+'">');
+			currentIssueArr.push('<h4>');
+			currentIssueArr.push(currentIssue.name);
+			currentIssueArr.push('</h4> ');
+			currentIssueArr.push('<div class="progress"></div>');
+			currentIssueArr.push('</div>');
+
+			issueHtml.push(currentIssueArr.join(''));
+		}
+
+		boxEl.innerHTML = issueHtml.join('');
 	}
+
 };
 
 app.initialize();

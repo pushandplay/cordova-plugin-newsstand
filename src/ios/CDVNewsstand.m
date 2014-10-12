@@ -81,6 +81,26 @@
 }
 
 - (void)archiveItem:(CDVInvokedUrlCommand *)command {
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult *pluginResult = nil;
+		NSString *issueName = @"";
+
+		if ([command.arguments count] >= 1) {
+			issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+		}
+
+		NKIssue *nkIssue = [self getIssueByName:issueName];
+
+		if (nkIssue != nil) {
+
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
+		} else {
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" not exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+		}
+
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	}];
 }
 
 - (void)getItem:(CDVInvokedUrlCommand *)command {
@@ -101,10 +121,50 @@
 	}];
 }
 
+- (void)downloadItem:(CDVInvokedUrlCommand *)command {
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult *pluginResult = nil;
+		NSString *issueName = @"";
+
+		if ([command.arguments count] >= 1) {
+			issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+		}
+
+		NKIssue *nkIssue = [self getIssueByName:issueName];
+
+		if (nkIssue != nil) {
+			if (nkIssue.status == NKIssueContentStatusNone) {
+				NSString *remoteURL = @"https://dl.dropboxusercontent.com/u/26238/pdfkiosk/library/oil-industry/issues/2014-1-rus.pdf";
+				NSURL *assetURL = [NSURL URLWithString:remoteURL];
+				NSURLRequest *request = [NSURLRequest requestWithURL:assetURL];
+				NKAssetDownload *asset = [nkIssue addAssetWithRequest:request];
+				NSDictionary *info = @{
+						@"name" : issueName,
+						@"contentURL" : remoteURL
+				};
+
+				[asset setUserInfo:info];
+				[asset downloadWithDelegate:self];
+
+				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
+			} else {
+				NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" busy, status: %d", nkIssue.name, nkIssue.status];
+				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+			}
+		} else {
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" not exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+		}
+
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+		[self sendIssueStatusToJS:nkIssue];
+	}];
+}
+
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command {
 	[self.commandDelegate runInBackground:^{
 		CDVPluginResult *pluginResult = nil;
-		NSString *coverURL = @"";
+		NSString *coverURL = nil;
 		if ([command.arguments count] >= 1) {
 			coverURL = (NSString *) (command.arguments)[0];
 		}
@@ -146,6 +206,53 @@
 	[dateFormatter setDateFormat:dateFormat];
 
 	return dateFormatter;
+}
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+	NKAssetDownload *asset = [connection newsstandAssetDownload];
+	NKIssue *nkIssue = [asset issue];
+
+	NSString *jsString = [NSString stringWithFormat:@"Newsstand.onDownloadProgress(\"%@\", %qi, %qi, %qi);", [nkIssue name], bytesWritten, totalBytesWritten, expectedTotalBytes];
+	[self.commandDelegate evalJs:jsString];
+}
+
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+	NKAssetDownload *asset = [connection newsstandAssetDownload];
+	NKIssue *nkIssue = [asset issue];
+	NSString *contentURL = [asset userInfo][@"contentURL"];
+	NSURL *issueURL = [nkIssue contentURL];
+	NSURL *toURL = [issueURL URLByAppendingPathComponent:[contentURL lastPathComponent]];
+
+	NSError *error = nil;
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	bool success = [fileManager moveItemAtURL:destinationURL
+										toURL:toURL
+										error:&error];
+
+	if (!success) {
+		NSLog(@"%@", [error localizedDescription]);
+	} else {
+		NSLog(@"success");
+	}
+
+	[self sendIssueStatusToJS:nkIssue];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+	NSLog(@"connection -> didReceiveResponse");
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+	NSLog(@"connection -> didReceiveData");
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	NSLog(@"connectionDidFinishLoading");
+}
+
+- (void)sendIssueStatusToJS:(NKIssue *)nkIssue {
+	NSString *jsString = [NSString stringWithFormat:@"Newsstand.onIssueStatus(\"%@\", %i);", [nkIssue name], [nkIssue status]];
+	[self.commandDelegate evalJs:jsString];
 }
 
 @end
