@@ -81,6 +81,26 @@
 }
 
 - (void)archiveItem:(CDVInvokedUrlCommand *)command {
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult *pluginResult = nil;
+		NSString *issueName = @"";
+
+		if ([command.arguments count] >= 1) {
+			issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+		}
+
+		NKIssue *nkIssue = [self getIssueByName:issueName];
+
+		if (nkIssue != nil) {
+
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
+		} else {
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" not exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+		}
+
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	}];
 }
 
 - (void)getItem:(CDVInvokedUrlCommand *)command {
@@ -137,13 +157,14 @@
 		}
 
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+		[self sendIssueStatusToJS:nkIssue];
 	}];
 }
 
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command {
 	[self.commandDelegate runInBackground:^{
 		CDVPluginResult *pluginResult = nil;
-		NSString *coverURL = @"";
+		NSString *coverURL = nil;
 		if ([command.arguments count] >= 1) {
 			coverURL = (NSString *) (command.arguments)[0];
 		}
@@ -188,39 +209,33 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-	float progress = [@((NSInteger) totalBytesWritten) floatValue];
-	float total = [@((NSInteger) expectedTotalBytes) floatValue];
-	float percentFloat = progress/total;
-	int percents = (int) (percentFloat*100 + 0.5);
 	NKAssetDownload *asset = [connection newsstandAssetDownload];
 	NKIssue *nkIssue = [asset issue];
-	NSLog(@"progress: %i, nkIssue: %@", percents, nkIssue.name);
+
+	NSString *jsString = [NSString stringWithFormat:@"Newsstand.onDownloadProgress(\"%@\", %qi, %qi, %qi);", [nkIssue name], bytesWritten, totalBytesWritten, expectedTotalBytes];
+	[self.commandDelegate evalJs:jsString];
 }
 
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
-	// Get a reference to our NKAssetDownload and NKIssue
 	NKAssetDownload *asset = [connection newsstandAssetDownload];
-	NKIssue *issue = [asset issue];
-	// Get the filename of our issue download from the user info
+	NKIssue *nkIssue = [asset issue];
 	NSString *contentURL = [asset userInfo][@"contentURL"];
-
-	// Get the path of Issue’s folder at ~/Library/Caches/Newsstand
-	NSURL *issueURL = [issue contentURL];
+	NSURL *issueURL = [nkIssue contentURL];
 	NSURL *toURL = [issueURL URLByAppendingPathComponent:[contentURL lastPathComponent]];
 
-	// Move the downloaded asset to our issue folder
 	NSError *error = nil;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	bool success = [fileManager moveItemAtURL:destinationURL
 										toURL:toURL
 										error:&error];
 
-	// If for some reason we failed to move the issue, tell us why
 	if (!success) {
 		NSLog(@"%@", [error localizedDescription]);
 	} else {
 		NSLog(@"success");
 	}
+
+	[self sendIssueStatusToJS:nkIssue];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
@@ -233,6 +248,11 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	NSLog(@"connectionDidFinishLoading");
+}
+
+- (void)sendIssueStatusToJS:(NKIssue *)nkIssue {
+	NSString *jsString = [NSString stringWithFormat:@"Newsstand.onIssueStatus(\"%@\", %i);", [nkIssue name], [nkIssue status]];
+	[self.commandDelegate evalJs:jsString];
 }
 
 @end

@@ -39,8 +39,8 @@ body {
 	font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	height: 100%;
-	margin: 0;
 	padding: 0;
+	margin-top: 0;
 	text-transform: uppercase;
 	width: 100%;
 }
@@ -60,6 +60,7 @@ body {
 	display: block;
 	clear: both;
 	overflow: auto;
+	margin: 32px 0;
 }
 
 #issues {
@@ -70,13 +71,25 @@ body {
 	border-bottom: solid 1px #4B946A;
 	padding: 2px 8px;
 }
+.issue[data-status="0"] h4 {
+	opacity: .4;
+ }
+.issue[data-status="1"] h4 {
+	color: #4B946A;
+}
+.issue[data-status="2"] .progress {
+	display: none;
+}
+
 .issue:first-child {
 	border-top: solid 1px #4B946A;
 }
 .issue .progress {
-	height: 3px;
+	height: 2px;
 	background-color: #4B946A;
 	width: 0;
+	position: absolute;
+	left: 0;
 }
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
 	.issue,

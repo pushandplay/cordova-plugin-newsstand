@@ -19,10 +19,11 @@
  *
 */`
 
-#argscheck = require 'cordova/argscheck'
-#channel = require 'cordova/channel'
-#utils = require 'cordova/utils'
+argscheck = require 'cordova/argscheck'
+utils = require 'cordova/utils'
 exec = require 'cordova/exec'
+
+#channel = require 'cordova/channel'
 #cordova = require 'cordova'
 #IssueError = require './IssueError'
 #Issue = require './Issue'
@@ -48,7 +49,7 @@ class NewsstandItem
     @
 
 class Newsstand
-  getItems: (successCallback, errorCallback) ->
+  @getItems: (successCallback, errorCallback) ->
     exec (success) ->
       issues = []
       for issue in success
@@ -57,12 +58,22 @@ class Newsstand
     , errorCallback, 'Newsstand', 'getItems', []
     @
 
-  addItem: (issueName, issueDate, successCallback, errorCallback) ->
+  @addItem: (issueName, issueDate, successCallback, errorCallback) ->
     new NewsstandItem(issueName, issueDate).save(successCallback, errorCallback)
 
-  updateNewsstandIconImage: (coverURL, successCallback, errorCallback) ->
+  @updateNewsstandIconImage: (coverURL, successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]
     @
 
+  # EVENTS
 
-module.exports = new Newsstand @
+  @onDownloadProgress: (issueName, bytesWritten, totalBytesWritten, expectedTotalBytes) ->
+    console.log "onDownloadProgress", issueName, bytesWritten, totalBytesWritten, expectedTotalBytes
+    @
+
+  @onIssueStatus: (issueName, issueStatus) ->
+    console.log "onIssueStatus", issueName, issueStatus
+    @
+
+
+module.exports = Newsstand

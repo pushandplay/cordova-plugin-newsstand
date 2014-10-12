@@ -51,6 +51,17 @@ var app = {
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
 		document.getElementById('btn-downloadItem').onclick = this.test_downloadItem;
 
+		Newsstand.onDownloadProgress = function(issueName, bytesWritten, totalBytesWritten, expectedTotalBytes) {
+			var progressEl = document.querySelector('#' + issueName + ' .progress');
+			progressEl.style.width = Math.round(totalBytesWritten/expectedTotalBytes*100) + '%';
+			console.log("onDownloadProgress->"+issueName, bytesWritten, totalBytesWritten, expectedTotalBytes);
+		};
+
+		Newsstand.onIssueStatus = function(issueName, issueStatus) {
+			document.getElementById(issueName).setAttribute('data-status', issueStatus);
+			console.log("onIssueStatus->"+issueName+"->"+issueStatus);
+		};
+
 		app.test_getItems();
 	},
 	test_addItem: function () {
@@ -110,8 +121,8 @@ var app = {
 	},
 	test_downloadItem: function () {
 		var lastIssue = app.issues[0];
-		var successCallback = function (msg) {
-			console.log('test_downloadItems->success: ' + msg);
+		var successCallback = function (msgObj) {
+			console.log('test_downloadItems->success: ' + JSON.stringify(msgObj));
 			app.test_getItems();
 		};
 		var errorCallback = function (msg) {
@@ -129,18 +140,16 @@ var app = {
 		var issueHtml = [];
 		var currentIssue = void 0;
 		var currentIssueArr = [];
+		var issuesCount = app.issues.length;
 
-		for (var i = 0; i < app.issues.length; ++i) {
+		for (var i = 0; i < issuesCount; ++i) {
 			currentIssueArr = [];
 			currentIssue = app.issues[i];
 
-			currentIssueArr.push('<div id="' + currentIssue.name + '" class="issue">');
+			currentIssueArr.push('<div id="' + currentIssue.name + '" class="issue" data-status="'+currentIssue.status+'">');
 			currentIssueArr.push('<h4>');
 			currentIssueArr.push(currentIssue.name);
 			currentIssueArr.push('</h4> ');
-			currentIssueArr.push('<span>(');
-			currentIssueArr.push(currentIssue.status);
-			currentIssueArr.push('</span>)');
 			currentIssueArr.push('<div class="progress"></div>');
 			currentIssueArr.push('</div>');
 

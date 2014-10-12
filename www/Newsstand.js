@@ -19,7 +19,11 @@
  * under the License.
  *
 */;
-var Newsstand, NewsstandItem, exec;
+var Newsstand, NewsstandItem, argscheck, exec, utils;
+
+argscheck = require('cordova/argscheck');
+
+utils = require('cordova/utils');
 
 exec = require('cordova/exec');
 
@@ -59,7 +63,7 @@ NewsstandItem = (function() {
 Newsstand = (function() {
   function Newsstand() {}
 
-  Newsstand.prototype.getItems = function(successCallback, errorCallback) {
+  Newsstand.getItems = function(successCallback, errorCallback) {
     exec(function(success) {
       var issue, issues, _i, _len;
       issues = [];
@@ -72,12 +76,22 @@ Newsstand = (function() {
     return this;
   };
 
-  Newsstand.prototype.addItem = function(issueName, issueDate, successCallback, errorCallback) {
+  Newsstand.addItem = function(issueName, issueDate, successCallback, errorCallback) {
     return new NewsstandItem(issueName, issueDate).save(successCallback, errorCallback);
   };
 
-  Newsstand.prototype.updateNewsstandIconImage = function(coverURL, successCallback, errorCallback) {
+  Newsstand.updateNewsstandIconImage = function(coverURL, successCallback, errorCallback) {
     exec(successCallback, errorCallback, 'Newsstand', 'updateNewsstandIconImage', [coverURL]);
+    return this;
+  };
+
+  Newsstand.onDownloadProgress = function(issueName, bytesWritten, totalBytesWritten, expectedTotalBytes) {
+    console.log("onDownloadProgress", issueName, bytesWritten, totalBytesWritten, expectedTotalBytes);
+    return this;
+  };
+
+  Newsstand.onIssueStatus = function(issueName, issueStatus) {
+    console.log("onIssueStatus", issueName, issueStatus);
     return this;
   };
 
@@ -85,4 +99,4 @@ Newsstand = (function() {
 
 })();
 
-module.exports = new Newsstand(this);
+module.exports = Newsstand;
