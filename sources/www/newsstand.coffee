@@ -43,6 +43,9 @@ class NewsstandItem
   remove: (successCallback, errorCallback) ->
     exec successCallback, errorCallback, 'Newsstand', 'removeItem', [@name]
     @
+  download: (successCallback, errorCallback) ->
+    exec successCallback, errorCallback, 'Newsstand', 'downloadItem', [@name]
+    @
 
 class Newsstand
   getItems: (successCallback, errorCallback) ->

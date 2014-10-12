@@ -47,6 +47,11 @@ NewsstandItem = (function() {
     return this;
   };
 
+  NewsstandItem.prototype.download = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, 'Newsstand', 'downloadItem', [this.name]);
+    return this;
+  };
+
   return NewsstandItem;
 
 })();

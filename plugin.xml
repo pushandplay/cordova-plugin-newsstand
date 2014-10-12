@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
         id="org.pushandplay.cordova.newsstand"
-        version="0.0.1-dev">
+        version="0.0.2-dev">
     <name>Newsstand</name>
     <description>This plugin provide the Newsstand functionality support into your iOS Cordova/Phonegap application
     </description>

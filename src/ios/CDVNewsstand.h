@@ -20,7 +20,7 @@
 #import <Cordova/CDV.h>
 #import <NewsstandKit/NewsstandKit.h>
 
-@interface CDVNewsstand : CDVPlugin
+@interface CDVNewsstand : CDVPlugin <NSURLConnectionDownloadDelegate>
 
 - (void)addItem:(CDVInvokedUrlCommand *)command;
 
@@ -31,6 +31,8 @@
 - (void)getItem:(CDVInvokedUrlCommand *)command;
 
 - (void)getItems:(CDVInvokedUrlCommand *)command;
+
+- (void)downloadItem:(CDVInvokedUrlCommand *)command;
 
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command;
 

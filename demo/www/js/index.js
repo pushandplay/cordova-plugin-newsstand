@@ -47,9 +47,9 @@ var app = {
 		document.getElementById('btn-addItem').onclick = this.test_addItem;
 		document.getElementById('btn-removeItem').onclick = this.test_removeItem;
 		document.getElementById('btn-archiveItem').onclick = this.test_archiveItem;
-		document.getElementById('btn-updateItem').onclick = this.test_updateItem;
 		document.getElementById('btn-getItems').onclick = this.test_getItems;
 		document.getElementById('btn-updateNewsstandIconImage').onclick = this.test_updateNewsstandIconImage;
+		document.getElementById('btn-downloadItem').onclick = this.test_downloadItem;
 
 		app.test_getItems();
 	},
@@ -86,9 +86,6 @@ var app = {
 	test_archiveItem: function (e) {
 
 	},
-	test_updateItem: function (e) {
-
-	},
 	test_getItems: function () {
 		var successCallback = function (data) {
 			app.issues = data;
@@ -109,6 +106,21 @@ var app = {
 		};
 
 		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
+	},
+	test_downloadItem: function() {
+		var lastIssue = app.issues[app.issues.length - 1];
+		var successCallback = function (msg) {
+			console.log('test_downloadItems->success: ' + msg);
+		};
+		var errorCallback = function () {
+			console.log('test_downloadItems->error');
+		};
+
+		if (lastIssue) {
+			lastIssue.download(successCallback, errorCallback)
+		} else {
+			app.test_getItems();
+		}
 	}
 };
 

@@ -101,6 +101,45 @@
 	}];
 }
 
+- (void)downloadItem:(CDVInvokedUrlCommand *)command {
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult *pluginResult = nil;
+		NSString *issueName = @"";
+
+		if ([command.arguments count] >= 1) {
+			issueName = [NSString stringWithFormat:@"%@", (NSString *) (command.arguments)[0]];
+		}
+
+		NKIssue *nkIssue = [self getIssueByName:issueName];
+
+		if (nkIssue != nil) {
+			if (nkIssue.status == NKIssueContentStatusNone) {
+				NSString *remoteURL = @"https://dl.dropboxusercontent.com/u/26238/pdfkiosk/library/oil-industry/issues/2014-1-rus.pdf";
+				NSURL *assetURL = [NSURL URLWithString:remoteURL];
+				NSURLRequest *request = [NSURLRequest requestWithURL:assetURL];
+				NKAssetDownload *asset = [nkIssue addAssetWithRequest:request];
+				NSDictionary *info = @{
+						@"name" : issueName,
+						@"contentURL" : remoteURL
+				};
+
+				[asset setUserInfo:info];
+				[asset downloadWithDelegate:self];
+
+				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
+			} else {
+				NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" busy, status: %d", issueName, nkIssue.status];
+				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+			}
+		} else {
+			NSString *msg = [NSString stringWithFormat:@"ussue with name \"%@\" not exist", issueName];
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:msg];
+		}
+
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	}];
+}
+
 - (void)updateNewsstandIconImage:(CDVInvokedUrlCommand *)command {
 	[self.commandDelegate runInBackground:^{
 		CDVPluginResult *pluginResult = nil;
@@ -146,6 +185,54 @@
 	[dateFormatter setDateFormat:dateFormat];
 
 	return dateFormatter;
+}
+
+- (void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
+	float progress = [@((NSInteger) totalBytesWritten) floatValue];
+	float total = [@((NSInteger) expectedTotalBytes) floatValue];
+	float percentFloat = progress/total;
+	int percents = (int) (percentFloat*100 + 0.5);
+	NKAssetDownload *asset = [connection newsstandAssetDownload];
+	NKIssue *nkIssue = [asset issue];
+	NSLog(@"progress: %i, nkIssue: %@", percents, nkIssue.name);
+}
+
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
+	// Get a reference to our NKAssetDownload and NKIssue
+	NKAssetDownload *asset = [connection newsstandAssetDownload];
+	NKIssue *issue = [asset issue];
+	// Get the filename of our issue download from the user info
+	NSString *contentURL = [asset userInfo][@"contentURL"];
+
+	// Get the path of Issue’s folder at ~/Library/Caches/Newsstand
+	NSURL *issueURL = [issue contentURL];
+	NSURL *toURL = [issueURL URLByAppendingPathComponent:[contentURL lastPathComponent]];
+
+	// Move the downloaded asset to our issue folder
+	NSError *error = nil;
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	bool success = [fileManager moveItemAtURL:destinationURL
+										toURL:toURL
+										error:&error];
+
+	// If for some reason we failed to move the issue, tell us why
+	if (!success) {
+		NSLog(@"%@", [error localizedDescription]);
+	} else {
+		NSLog(@"success");
+	}
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+	NSLog(@"connection -> didReceiveResponse");
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+	NSLog(@"connection -> didReceiveData");
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	NSLog(@"connectionDidFinishLoading");
 }
 
 @end
