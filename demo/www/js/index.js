@@ -67,7 +67,7 @@ var app = {
 		Newsstand.addItem(issueName, issueDate, successCallback, errorCallback);
 	},
 	test_removeItem: function () {
-		var lastIssue = app.issues[app.issues.length - 1];
+		var lastIssue = app.issues[0];
 		var successCallback = function () {
 			app.issues.pop();
 			console.log('test_removeItem->success', JSON.stringify(app.issues.length));
@@ -90,6 +90,7 @@ var app = {
 		var successCallback = function (data) {
 			app.issues = data;
 			console.log('test_getItems->success: ' + JSON.stringify(app.issues));
+			app.updateIssuesList();
 		};
 		var errorCallback = function () {
 			console.log('test_getItems->error');
@@ -107,10 +108,11 @@ var app = {
 
 		Newsstand.updateNewsstandIconImage(iconUrl, successCallback, errorCallback);
 	},
-	test_downloadItem: function() {
+	test_downloadItem: function () {
 		var lastIssue = app.issues[0];
 		var successCallback = function (msg) {
 			console.log('test_downloadItems->success: ' + msg);
+			app.test_getItems();
 		};
 		var errorCallback = function (msg) {
 			console.log('test_downloadItems->error: ' + msg);
@@ -121,7 +123,33 @@ var app = {
 		} else {
 			app.test_getItems();
 		}
+	},
+	updateIssuesList: function () {
+		var boxEl = document.getElementById('issues');
+		var issueHtml = [];
+		var currentIssue = void 0;
+		var currentIssueArr = [];
+
+		for (var i = 0; i < app.issues.length; ++i) {
+			currentIssueArr = [];
+			currentIssue = app.issues[i];
+
+			currentIssueArr.push('<div id="' + currentIssue.name + '" class="issue">');
+			currentIssueArr.push('<h4>');
+			currentIssueArr.push(currentIssue.name);
+			currentIssueArr.push('</h4> ');
+			currentIssueArr.push('<span>(');
+			currentIssueArr.push(currentIssue.status);
+			currentIssueArr.push('</span>)');
+			currentIssueArr.push('<div class="progress"></div>');
+			currentIssueArr.push('</div>');
+
+			issueHtml.push(currentIssueArr.join(''));
+		}
+
+		boxEl.innerHTML = issueHtml.join('');
 	}
+
 };
 
 app.initialize();
